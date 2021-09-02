@@ -23,7 +23,7 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
 
     public static SDKHandler sdkHandler;
     ArrayList<DCSScannerInfo> mScannerInfoList = new ArrayList<>();
-    static int connectedScannerID;
+    static int connectedScannerID = -1;
 
     public void load() {
         sdkHandler = new SDKHandler(getContext());
