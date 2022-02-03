@@ -68,12 +68,18 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
     @Override
     public void dcssdkEventScannerDisappeared(int scannerID) {
         connectedScannerID = -1;
+        JSObject ret = new JSObject();
+        ret.put("newScannerId", connectedScannerID);
+        notifyListeners("newScannerDetected", ret);
     }
 
     @Override
     public void dcssdkEventCommunicationSessionEstablished(DCSScannerInfo activeScanner) {
         connectedScannerID = activeScanner.getScannerID();
         connectToScanner();
+        JSObject ret = new JSObject();
+        ret.put("newScannerId", connectedScannerID);
+        notifyListeners("newScannerDetected", ret);
     }
 
     @Override
@@ -165,4 +171,3 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
         }
     }
 }
-
