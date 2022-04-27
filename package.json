@@ -1,6 +1,6 @@
 {
   "name": "qr-scanner-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A plugin to interface with zebra qr scanners",
   "main": "dist/plugin.js",
   "module": "dist/esm/index.js",
