@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
+import com.getcapacitor.CapacitorPlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -16,7 +16,7 @@ import com.zebra.scannercontrol.IDcsSdkApiDelegate;
 import com.zebra.scannercontrol.SDKHandler;
 import java.util.ArrayList;
 
-@NativePlugin
+@CapacitorPlugin
 public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate {
 
     public static SDKHandler sdkHandler;
