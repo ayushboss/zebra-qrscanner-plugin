@@ -23,10 +23,10 @@ class PluginTests: XCTestCase {
 
         let call = CAPPluginCall(callbackId: "test", options: [
             "value": value
-        ], success: { (result, _) in
+        ], resolve: { (result, _) in
             let resultValue = result!.data["value"] as? String
             XCTAssertEqual(value, resultValue)
-        }, error: { (_) in
+        }, reject: { (_) in
             XCTFail("Error shouldn't have been called")
         })
 
