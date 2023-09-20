@@ -1,0 +1,7 @@
+{
+  "name": "qr-scanner-plugin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

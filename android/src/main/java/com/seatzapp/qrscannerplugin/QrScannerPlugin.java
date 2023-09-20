@@ -4,9 +4,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
+import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -15,11 +14,10 @@ import com.zebra.scannercontrol.DCSScannerInfo;
 import com.zebra.scannercontrol.FirmwareUpdateEvent;
 import com.zebra.scannercontrol.IDcsSdkApiDelegate;
 import com.zebra.scannercontrol.SDKHandler;
-
 import java.util.ArrayList;
 
-@NativePlugin()
-public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
+@CapacitorPlugin
+public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate {
 
     public static SDKHandler sdkHandler;
     ArrayList<DCSScannerInfo> mScannerInfoList = new ArrayList<>();
@@ -35,12 +33,12 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
 
         // We would like to subscribe to all scanner available/not-available events
         notifications_mask |=
-                DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_APPEARANCE.value |
-                        DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_DISAPPEARANCE.value;
+            DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_APPEARANCE.value |
+            DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_DISAPPEARANCE.value;
         // We would like to subscribe to all scanner connection events
         notifications_mask |=
-                DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_ESTABLISHMENT.value |
-                        DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_TERMINATION.value;
+            DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_ESTABLISHMENT.value |
+            DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_TERMINATION.value;
         // We would like to subscribe to all barcode events
         notifications_mask |= DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_BARCODE.value;
         // subscribe to events set in notification mask
@@ -49,7 +47,7 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
         sdkHandler.dcssdkEnableAvailableScannersDetection(true);
     }
 
-    @PluginMethod()
+    @PluginMethod
     public void currentScanner(PluginCall call) {
         JSObject ret = new JSObject();
         ret.put("currentScanner", connectedScannerID);
@@ -84,7 +82,9 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
 
     @Override
     public void dcssdkEventCommunicationSessionTerminated(int scannerID) {
-
+        JSObject ret = new JSObject();
+        ret.put("scannerId", scannerID);
+        notifyListeners("scannerDisconnected", ret);
     }
 
     @Override
@@ -97,32 +97,21 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
     }
 
     @Override
-    public void dcssdkEventImage(byte[] bytes, int i) {
-
-    }
+    public void dcssdkEventImage(byte[] bytes, int i) {}
 
     @Override
-    public void dcssdkEventVideo(byte[] bytes, int i) {
-
-    }
+    public void dcssdkEventVideo(byte[] bytes, int i) {}
 
     @Override
-    public void dcssdkEventBinaryData(byte[] bytes, int i) {
-
-    }
+    public void dcssdkEventBinaryData(byte[] bytes, int i) {}
 
     @Override
-    public void dcssdkEventFirmwareUpdate(FirmwareUpdateEvent var1) {
-
-    }
+    public void dcssdkEventFirmwareUpdate(FirmwareUpdateEvent var1) {}
 
     @Override
-    public void dcssdkEventAuxScannerAppeared(DCSScannerInfo dcsScannerInfo, DCSScannerInfo dcsScannerInfo1) {
-
-    }
+    public void dcssdkEventAuxScannerAppeared(DCSScannerInfo dcsScannerInfo, DCSScannerInfo dcsScannerInfo1) {}
 
     private final Handler dataHandler = new Handler() {
-
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.BARCODE_RECEIVED:
@@ -135,37 +124,40 @@ public class QrScannerPlugin extends Plugin implements IDcsSdkApiDelegate{
     public void connectToScanner() {
         new ScannerConnectionAsyncTask(connectedScannerID).execute();
     }
-    private class ScannerConnectionAsyncTask extends AsyncTask<Void,Integer,Boolean> {
+
+    private class ScannerConnectionAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+
         private int scannerId;
-        public ScannerConnectionAsyncTask(int scannerId){
-            this.scannerId=scannerId;
+
+        public ScannerConnectionAsyncTask(int scannerId) {
+            this.scannerId = scannerId;
         }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
+
         @Override
         protected Boolean doInBackground(Void... voids) {
-            DCSSDKDefs.DCSSDK_RESULT result =
-                    DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE;
+            DCSSDKDefs.DCSSDK_RESULT result = DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE;
             if (sdkHandler != null) {
-                result =
-                        sdkHandler.dcssdkEstablishCommunicationSession(scannerId);
+                result = sdkHandler.dcssdkEstablishCommunicationSession(scannerId);
             }
 
-            if(result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS){
+            if (result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_SUCCESS) {
                 return true;
-            }
-            else if(result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE) {
+            } else if (result == DCSSDKDefs.DCSSDK_RESULT.DCSSDK_RESULT_FAILURE) {
                 return false;
             }
             return false;
         }
+
         @Override
         protected void onPostExecute(Boolean b) {
             super.onPostExecute(b);
             Intent returnIntent = new Intent();
-            if(b){
+            if (b) {
                 returnIntent.putExtra(Constants.SCANNER_ID, scannerId);
             }
         }
