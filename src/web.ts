@@ -1,4 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
+
 import type { QrScannerPluginPlugin } from './definitions';
 
 export class QrScannerPluginWeb extends WebPlugin implements QrScannerPluginPlugin {
