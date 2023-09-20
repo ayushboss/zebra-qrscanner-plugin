@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.CapacitorPlugin;
+import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
