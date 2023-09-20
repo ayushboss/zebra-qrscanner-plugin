@@ -2,15 +2,24 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 
 export default {
   input: 'dist/esm/index.js',
-  output: {
+  output: [
+    {
     file: 'dist/plugin.js',
     format: 'iife',
-    name: 'capacitorPlugin', // TODO: change this
+    name: 'capacitorQrCodeScanner', // TODO: change this
     globals: {
       '@capacitor/core': 'capacitorExports',
     },
     sourcemap: true,
+    inlineDynamicImports: true,
   },
+  {
+    file: 'dist/plugin.cjs.js',
+    format: 'cjs',
+    sourcemap: true,
+    inlineDynamicImports: true,
+  },
+],
   plugins: [
     nodeResolve({
       // allowlist of dependencies to bundle in
@@ -18,4 +27,5 @@ export default {
       resolveOnly: ['lodash'],
     }),
   ],
+  external: ['@capacitor/core'],
 };

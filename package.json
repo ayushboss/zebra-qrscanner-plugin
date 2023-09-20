@@ -2,42 +2,54 @@
   "name": "qr-scanner-plugin",
   "version": "0.0.2",
   "description": "A plugin to interface with zebra qr scanners",
-  "main": "dist/plugin.js",
+  "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
   "scripts": {
-    "lint": "npm run prettier -- --check && npm run swiftlint -- lint",
+    "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist",
+    "docgen": "docgen --api QrScannerPluginPlugin --output-readme README.md --output-json dist/docs.json",
+    "eslint": "eslint . --ext ts",
+    "fmt": "npm run eslint -- --fix && npm run prettier -- --write && npm run swiftlint -- --fix --format",
+    "ionic:build": "npm run build",
+    "lint": "npm run eslint && npm run prettier -- --check && npm run swiftlint -- lint",
+    "prepublishOnly": "npm run build",
     "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
     "swiftlint": "node-swiftlint",
-    "build": "npm run clean && tsc && rollup -c rollup.config.js",
-    "clean": "rimraf ./dist",
-    "watch": "tsc --watch",
-    "prepublishOnly": "npm run build",
-    "ionic:build": "npm run build"
+    "verify:android": "cd android && ./gradlew clean build test && cd ..",
+    "verify:ios": "cd ios && pod install && xcodebuild -workspace Plugin.xcworkspace -scheme Plugin -destination generic/platform=iOS && cd ..",
+    "verify:web": "npm run build",
+    "verify": "npm run verify:ios && npm run verify:android && npm run verify:web",
+    "watch": "tsc --watch"
   },
   "author": "Ayush Suresh",
   "license": "MIT",
   "devDependencies": {
-    "@capacitor/android": "5.4.0",
-    "@capacitor/core": "5.4.0",
-    "@capacitor/ios": "5.4.0",
+    "@capacitor/android": "5.3.0",
+    "@capacitor/core": "5.3.0",
+    "@capacitor/ios": "5.3.0",
     "@ionic/prettier-config": "4.0.0",
-    "@ionic/swiftlint-config": "^1.0.0",
-    "@rollup/plugin-node-resolve": "^8.1.0",
-    "prettier": "^2.0.5",
-    "prettier-plugin-java": "^0.8.0",
+    "@rollup/plugin-node-resolve": "15.2.1",
+    "prettier": "3.0.3",
+    "prettier-plugin-java": "2.3.1",
     "rimraf": "5.0.1",
-    "rollup": "^2.21.0",
-    "swiftlint": "^1.0.1",
-    "typescript": "5.2.2"
+    "rollup": "3.29.2",
+    "swiftlint": "1.0.2",
+    "@capacitor/docgen": "^0.0.18",
+    "@ionic/eslint-config": "^0.3.0",
+    "@ionic/swiftlint-config": "^1.1.2",
+    "eslint": "^7.11.0",
+    "typescript": "~4.1.5"
   },
   "peerDependencies": {
-    "@capacitor/core": "5.4.0"
+    "@capacitor/core": "5.3.0"
   },
   "files": [
+    "android/src/main/",
+    "android/build.gradle",
     "dist/",
-    "ios/",
-    "android/",
+    "ios/Plugin/",
     "QrScannerPlugin.podspec"
   ],
   "keywords": [
@@ -55,6 +67,9 @@
   },
   "prettier": "@ionic/prettier-config",
   "swiftlint": "@ionic/swiftlint-config",
+  "eslintConfig": {
+    "extends": "@ionic/eslint-config/recommended"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ayushboss/zebra-qrscanner-plugin.git"
